@@ -5,28 +5,12 @@ import { NextPageWithLayout } from "./_app";
 import { ReactElement, useEffect, useState } from "react";
 import AuthLayout from "../components/authLayout";
 import { useRouter } from "next/router";
-import { List } from "../types/supabase";
 import NavBar from "../components/navBar";
 
 const Home: NextPageWithLayout = () => {
-  const router = useRouter();
   const {isLoading, user, error} = useUser();
-  const [lists, setLists] = useState<undefined | List[]>(undefined);
-  const [dataLoading, setDataLoading] = useState(true);
 
-  const loading = isLoading || dataLoading;
-
-  useEffect(() => {
-    async function loadData() {
-      const {data} = await supabaseClient.from<List>('list').select("*");
-      const sortedData = data?.sort((a, b) =>
-        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-      );
-      setLists(sortedData);
-      setDataLoading(false);
-    }
-    loadData();
-  }, []);
+  const loading = isLoading;
 
   if (loading) {
     return (
@@ -47,18 +31,9 @@ const Home: NextPageWithLayout = () => {
         <h1 className="text-xl font-bold text-pink-800">Shoppi</h1>
       </div>
       <main className="container p-4">
-        <ul className="">
-          {lists ? (
-            lists.map((list) => (
-              <li className="border-b border-black p-4" key={list.id} onClick={() => router.push(`/list/${list.id}`)}>
-                {list.name}
-              </li>
-            ))
-          ) : (
-            <p>You dont have any lists</p>
-          )}
-        </ul>
-        <p>{error?.message}</p>
+        {
+          //TODO: create profile page
+        }
       </main>
       <NavBar />
     </>
