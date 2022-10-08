@@ -1,5 +1,6 @@
 import { useUser } from "@supabase/auth-helpers-react";
 import { supabaseClient } from '@supabase/auth-helpers-nextjs';
+import { env } from "../env/client.mjs";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -7,12 +8,19 @@ type LayoutProps = {
 
 export default function AuthLayout({children}: LayoutProps) {
   const {isLoading, user, error} = useUser();
+  const redirectURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : env.NEXT_PUBLIC_REDIRECT_URL;
+
+  if (user) {
+    return (
+      <>
+        {children}
+      </>
+    )
+  }
 
   return (
     <>
-      {user ? (
-        children
-      ) : (
+      {redirectURL ? (
         <>
           {error && <p>{error.message}</p>}
           {isLoading ? <h1>Loading...</h1> : <h1>Loaded!</h1>}
@@ -20,13 +28,15 @@ export default function AuthLayout({children}: LayoutProps) {
             onClick={() => {
               supabaseClient.auth.signIn(
                 { provider: "discord" },
-                { redirectTo: "http://localhost:3000" }
+                { redirectTo: redirectURL }
               );
             }}
           >
-            Login with github
+            Login with Discord
           </button>
         </>
+      ) : (
+        <h1 className="text-red-400 font-2xl">NEXT_PUBLIC_REDIRECT_URL is not set.</h1>
       )}
     </>
   );
