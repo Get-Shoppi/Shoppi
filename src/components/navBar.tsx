@@ -12,8 +12,6 @@ export default function NavBar() {
   const [route, setRoute] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    console.log("route updated in nav bar.");
-    console.log(router.pathname);
     setRoute(router.pathname);
   }, [router.pathname]);
 
